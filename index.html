@@ -19,12 +19,38 @@
       // Header Component
       const Header = () =>
         <>
-          <h1>더치페이 계산기</h1>
+          <h1>Dutch Treat Calculator</h1>
         </>
+      
+      const Row = () =>
+        <>
+          <label>
+            Name: 
+            <input type="text" name="name" />
+          </label>
+          <label>
+            Amount of Money: 
+            <input type="number" name="money" />
+          </label>
+        </>
+      
+      const Calculator = () => {
+        const [rowList, setRowList] = React.useState([]);
+        const addRow = e => {
+          setRowList(rowList.concat(<Row key={rowList.length}/>));
+        };
+        return (
+          <>
+            <button onClick={addRow}>add</button>
+            {rowList}
+          </>
+        )
+      }
       
       ReactDOM.render(
         <>
           <Header/>
+          <Calculator/>
         </>,
         document.getElementById('container')
       );
