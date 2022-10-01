@@ -22,35 +22,63 @@
           <h1>Dutch Treat Calculator</h1>
         </>
       
-      const Row = () =>
-        <>
-          <label>
-            Name: 
-            <input type="text" name="name" />
-          </label>
-          <label>
-            Amount of Money: 
-            <input type="number" name="money" />
-          </label>
-        </>
-      
+      // Calculator Component
       const Calculator = () => {
-        const [rowList, setRowList] = React.useState([]);
-        const addRow = e => {
-          setRowList(rowList.concat(<Row key={rowList.length}/>));
-        };
-        return (
-          <>
-            <button onClick={addRow}>add</button>
-            {rowList}
-          </>
-        )
-      }
+        const [inputList, setInputList] = React.useState([{ name: "", amountUsed: "" }]);
       
+        // handle input change
+        const handleInputChange = (e, index) => {
+          const { name, value } = e.target;
+          const list = [...inputList];
+          list[index][name] = value;
+          setInputList(list);
+        };
+      
+        // handle click event of the Remove button
+        const handleRemoveClick = index => {
+          const list = [...inputList];
+          list.splice(index, 1);
+          setInputList(list);
+        };
+      
+        // handle click event of the Add button
+        const handleAddClick = () => {
+          setInputList([...inputList, { name: "", amountUsed: ""}]);
+        };
+      
+        return (
+          <div className="Calculator">
+            {inputList.map((x, i) => {
+              return (
+                <div className="inputRow" key={"inputRowId"+i}>
+                  <input
+                    name="name"
+                    placeholder="Enter Name"
+                    value={x.name}
+                    onChange={e => handleInputChange(e, i)}
+                  />
+                  <input
+                    name="amountUsed"
+                    placeholder="Enter Amount Used"
+                    value={x.amountUsed}
+                    onChange={e => handleInputChange(e, i)}
+                  />
+                  {inputList.length !== 1 && <button onClick={() => handleRemoveClick(i)}>Remove</button>}
+                  <div className="add-btn">
+                    {inputList.length - 1 === i && <button onClick={handleAddClick}>Add</button>}
+                  </div>
+                </div>
+              );
+            })}
+            {/*show input list*/}
+            <div style={{ marginTop: 20 }}>{JSON.stringify(inputList)}</div>
+          </div>
+        );
+      }
       ReactDOM.render(
         <>
-          <Header/>
-          <Calculator/>
+          <Header />
+          <Calculator />
         </>,
         document.getElementById('container')
       );
