@@ -3,6 +3,7 @@
   <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <link rel="stylesheet" href="css/style.css">
     <title></title>
     <meta name="description" content="">
     <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -46,30 +47,51 @@
           setInputList([...inputList, { name: "", amountUsed: ""}]);
         };
       
+        // handle click event of the Calculate button
+        const handleCalculate = e => {
+          e.preventDefault();
+          const index = inputList.length
+          const name_array = inputList.map((x) => {return x.name});
+          const split_array= inputList.map((x) => {return x.amountUsed/index});
+          const array_list = inputList.map((x) => {return Array(index).fill(x.amountUsed/index)});
+          const cal_value_list = array_list.map((x) => {return x.map((y, i) => {return split_array[i] - y})});
+          const result_list = cal_value_list.map((x) => {return x.map((y, i) => {return y>0 ? "send " + y + " to " + name_array[i] : ""})})
+          console.log(cal_value_list);
+          console.log(result_list);
+        }
         return (
           <div className="Calculator">
-            {inputList.map((x, i) => {
-              return (
-                <div className="inputRow" key={"inputRowId"+i}>
-                  <input
-                    name="name"
-                    placeholder="Enter Name"
-                    value={x.name}
-                    onChange={e => handleInputChange(e, i)}
-                  />
-                  <input
-                    name="amountUsed"
-                    placeholder="Enter Amount Used"
-                    value={x.amountUsed}
-                    onChange={e => handleInputChange(e, i)}
-                  />
-                  {inputList.length !== 1 && <button onClick={() => handleRemoveClick(i)}>Remove</button>}
-                  <div className="add-btn">
-                    {inputList.length - 1 === i && <button onClick={handleAddClick}>Add</button>}
-                  </div>
-                </div>
-              );
-            })}
+            <form onSubmit={handleCalculate}>
+              <fieldset>
+                {inputList.map((x, i) => {
+                  return (
+                    <div className="inputRow" key={"inputRowId"+i}>
+                      <input
+                        type = "text"
+                        name="name"
+                        placeholder="Enter Name"
+                        value={x.name}
+                        onChange={e => handleInputChange(e, i)}
+                        required
+                      />
+                      <input
+                        type = "number"
+                        name="amountUsed"
+                        placeholder="Enter Amount Used"
+                        value={x.amountUsed}
+                        onChange={e => handleInputChange(e, i)}
+                        required
+                      />
+                      {inputList.length !== 1 && <button onClick={() => handleRemoveClick(i)}>Remove</button>}
+                      <div className="add-btn">
+                        {inputList.length - 1 === i && <button onClick={handleAddClick}>Add</button>}
+                      </div>
+                    </div>
+                  );
+                })}
+                <input type="submit" value="Calculate"/>
+              </fieldset>
+            </form>
             {/*show input list*/}
             <div style={{ marginTop: 20 }}>{JSON.stringify(inputList)}</div>
           </div>
