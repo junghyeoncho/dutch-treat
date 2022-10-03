@@ -24,9 +24,10 @@
         </>
       
       // Calculator Component
-      const Calculator = () => {
+      const Calculator = ({setResultList, setNameArray}) => {
+        // State Hook to update input list
         const [inputList, setInputList] = React.useState([{ name: "", amountUsed: "" }]);
-      
+
         // handle input change
         const handleInputChange = (e, index) => {
           const { name, value } = e.target;
@@ -49,15 +50,16 @@
       
         // handle click event of the Calculate button
         const handleCalculate = e => {
+          // prevent re-render the form
           e.preventDefault();
           const index = inputList.length
-          const name_array = inputList.map((x) => {return x.name});
-          const split_array= inputList.map((x) => {return x.amountUsed/index});
-          const array_list = inputList.map((x) => {return Array(index).fill(x.amountUsed/index)});
+          const name_array = inputList.map(x => x.name);
+          setNameArray(name_array);
+          const split_array= inputList.map(x => x.amountUsed/index);
+          const array_list = inputList.map(x => Array(index).fill(x.amountUsed/index));
           const cal_value_list = array_list.map((x) => {return x.map((y, i) => {return split_array[i] - y})});
-          const result_list = cal_value_list.map((x) => {return x.map((y, i) => {return y>0 ? "send " + y + " to " + name_array[i] : ""})})
-          console.log(cal_value_list);
-          console.log(result_list);
+          const results = cal_value_list.map((x) => {return x.map((y, i) => {return y>0 ? {amount: y, name: name_array[i]} : null})})
+          setResultList(results.map(x => x.filter(result => result != null)));
         }
         return (
           <div className="Calculator">
@@ -66,22 +68,10 @@
                 {inputList.map((x, i) => {
                   return (
                     <div className="inputRow" key={"inputRowId"+i}>
-                      <input
-                        type = "text"
-                        name="name"
-                        placeholder="Enter Name"
-                        value={x.name}
-                        onChange={e => handleInputChange(e, i)}
-                        required
-                      />
-                      <input
-                        type = "number"
-                        name="amountUsed"
-                        placeholder="Enter Amount Used"
-                        value={x.amountUsed}
-                        onChange={e => handleInputChange(e, i)}
-                        required
-                      />
+                      <input type = "text" name="name" placeholder="Enter Name" value={x.name}
+                        onChange={e => handleInputChange(e, i)} required />
+                      <input type = "number" name="amountUsed" placeholder="Enter Amount Used" value={x.amountUsed} 
+                        onChange={e => handleInputChange(e, i)} required />
                       {inputList.length !== 1 && <button onClick={() => handleRemoveClick(i)}>Remove</button>}
                       <div className="add-btn">
                         {inputList.length - 1 === i && <button onClick={handleAddClick}>Add</button>}
@@ -97,10 +87,51 @@
           </div>
         );
       }
+
+      // Result Component
+      const Result = ({resultList, nameArray}) => {
+        if(resultList.length > 0) {
+          return(
+            <>
+              <div className="result" id="result-box">
+                <div className="result-content">
+                  <h2>Calculation Result</h2>
+                  {resultList.map((x,i) => {
+                    if(x.length > 0) {
+                      return(
+                      <div className="result-content-list" key={"resultList"+i}>
+                        <h3>{nameArray[i]}</h3>
+                        {x.map((y, ii) => <p key={i + y.name + ii}>send ${y.amount} to {y.name}</p>)}
+                      </div>
+                      )
+                    }
+                  })}
+                </div>
+              </div>
+            </>
+          )
+        } else {
+          return null;
+        }
+        
+      }
+
+      // App Component
+      const App = () => {
+        // State hook to update name array and result list
+        const [nameArray, setNameArray] = React.useState([]);
+        const [resultList, setResultList] = React.useState([]);
+        return(
+          <>
+            <Header />
+            <Calculator setResultList={setResultList} setNameArray={setNameArray}/>
+            <Result resultList={resultList} nameArray={nameArray}/>
+          </>
+        )
+      }
       ReactDOM.render(
         <>
-          <Header />
-          <Calculator />
+          <App />
         </>,
         document.getElementById('container')
       );
