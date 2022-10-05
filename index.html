@@ -24,9 +24,7 @@
         </>
       
       // Calculator Component
-      const Calculator = ({setResultList, setNameArray, setShowCalculator}) => {
-        // State Hook to update input list
-        const [inputList, setInputList] = React.useState([{ name: "", amountUsed: "" }]);
+      const Calculator = ({inputList, setInputList, setResultList, setNameArray, setShowCalculator}) => {
 
         // handle input change
         const handleInputChange = (e, index) => {
@@ -120,7 +118,8 @@
 
       // App Component
       const App = () => {
-        // State hook to update name array and result list
+        // State hook to update input list, name array, result list and show calculator
+        const [inputList, setInputList] = React.useState([{ name: "", amountUsed: "" }]);
         const [nameArray, setNameArray] = React.useState([]);
         const [resultList, setResultList] = React.useState([]);
         const [showCalculator, setShowCalculator] = React.useState(true);
@@ -128,7 +127,7 @@
           <>
             <Header />
             { showCalculator
-              ? <Calculator setResultList={setResultList} setNameArray={setNameArray} setShowCalculator={setShowCalculator}/>
+              ? <Calculator inputList={inputList} setInputList={setInputList} setResultList={setResultList} setNameArray={setNameArray} setShowCalculator={setShowCalculator}/>
               : <Result resultList={resultList} nameArray={nameArray} setShowCalculator={setShowCalculator}/>
             }
           </>
