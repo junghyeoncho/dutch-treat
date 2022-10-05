@@ -24,7 +24,7 @@
         </>
       
       // Calculator Component
-      const Calculator = ({inputList, setInputList, setResultList, setNameArray, setShowCalculator}) => {
+      const Calculator = ({inputList, setInputList, setResultList, setShowCalculator}) => {
 
         // handle input change
         const handleInputChange = (e, index) => {
@@ -52,7 +52,6 @@
           e.preventDefault();
           const index = inputList.length
           const name_array = inputList.map(x => x.name);
-          setNameArray(name_array);
           const split_array= inputList.map(x => x.amountUsed/index);
           const array_list = inputList.map(x => Array(index).fill(x.amountUsed/index));
           const cal_value_list = array_list.map((x) => {return x.map((y, i) => {return split_array[i] - y})});
@@ -88,7 +87,7 @@
       }
 
       // Result Component
-      const Result = ({resultList, nameArray, setShowCalculator}) => {
+      const Result = ({inputList, resultList, setShowCalculator}) => {
         if(resultList.length > 0) {
           return(
             <>
@@ -99,7 +98,7 @@
                     if(x.length > 0) {
                       return(
                       <div className="result-content-list" key={"resultList"+i}>
-                        <h3>{nameArray[i]}</h3>
+                        <h3>{inputList[i].name}</h3>
                         {x.map((y, ii) => <p key={i + y.name + ii}>send ${y.amount} to {y.name}</p>)}
                       </div>
                       )
@@ -120,15 +119,14 @@
       const App = () => {
         // State hook to update input list, name array, result list and show calculator
         const [inputList, setInputList] = React.useState([{ name: "", amountUsed: "" }]);
-        const [nameArray, setNameArray] = React.useState([]);
         const [resultList, setResultList] = React.useState([]);
         const [showCalculator, setShowCalculator] = React.useState(true);
         return(
           <>
             <Header />
             { showCalculator
-              ? <Calculator inputList={inputList} setInputList={setInputList} setResultList={setResultList} setNameArray={setNameArray} setShowCalculator={setShowCalculator}/>
-              : <Result resultList={resultList} nameArray={nameArray} setShowCalculator={setShowCalculator}/>
+              ? <Calculator inputList={inputList} setInputList={setInputList} setResultList={setResultList} setShowCalculator={setShowCalculator}/>
+              : <Result inputList={inputList} resultList={resultList} setShowCalculator={setShowCalculator}/>
             }
           </>
         )
