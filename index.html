@@ -24,7 +24,7 @@
         </>
       
       // Calculator Component
-      const Calculator = ({setResultList, setNameArray}) => {
+      const Calculator = ({setResultList, setNameArray, setShowCalculator}) => {
         // State Hook to update input list
         const [inputList, setInputList] = React.useState([{ name: "", amountUsed: "" }]);
 
@@ -60,6 +60,7 @@
           const cal_value_list = array_list.map((x) => {return x.map((y, i) => {return split_array[i] - y})});
           const results = cal_value_list.map((x) => {return x.map((y, i) => {return y>0 ? {amount: y, name: name_array[i]} : null})})
           setResultList(results.map(x => x.filter(result => result != null)));
+          setShowCalculator(false);
         }
         return (
           <div className="Calculator">
@@ -89,7 +90,7 @@
       }
 
       // Result Component
-      const Result = ({resultList, nameArray}) => {
+      const Result = ({resultList, nameArray, setShowCalculator}) => {
         if(resultList.length > 0) {
           return(
             <>
@@ -108,6 +109,7 @@
                   })}
                 </div>
               </div>
+              <button onClick={() => setShowCalculator(true)}>Return</button>
             </>
           )
         } else {
@@ -121,11 +123,14 @@
         // State hook to update name array and result list
         const [nameArray, setNameArray] = React.useState([]);
         const [resultList, setResultList] = React.useState([]);
+        const [showCalculator, setShowCalculator] = React.useState(true);
         return(
           <>
             <Header />
-            <Calculator setResultList={setResultList} setNameArray={setNameArray}/>
-            <Result resultList={resultList} nameArray={nameArray}/>
+            { showCalculator
+              ? <Calculator setResultList={setResultList} setNameArray={setNameArray} setShowCalculator={setShowCalculator}/>
+              : <Result resultList={resultList} nameArray={nameArray} setShowCalculator={setShowCalculator}/>
+            }
           </>
         )
       }
