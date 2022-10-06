@@ -11,6 +11,8 @@
     <script crossorigin src="https://unpkg.com/react@17/umd/react.development.js"></script>
     <!-- CDN for React DOM -->
     <script crossorigin src="https://unpkg.com/react-dom@17/umd/react-dom.development.js"></script>
+    <!-- Load html2canvas -->
+    <script crossorigin src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     <!-- Load Babel -->
     <script crossorigin src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
   </head>
@@ -96,10 +98,24 @@
 
       // Result Component
       const Result = ({inputList, resultList, setShowCalculator}) => {
+        const ref = React.useRef();
+        const handleDownload = (element) => {
+          html2canvas(element).then((canvas => {
+            const resultImage = canvas.toDataURL("image/png");
+            let anchor = document.createElement('a');
+            document.body.appendChild(anchor);
+            anchor.style = "display:none;";
+            anchor.href = resultImage
+            anchor.download = "image_name"
+            anchor.click();
+            document.body.removeChild(anchor);
+            anchor.remove();
+          }));
+        }
         if(resultList.length > 0) {
           return(
             <>
-              <div className="result" id="result-box">
+              <div ref={ref} className="result" id="result-box">
                 <div className="result-content">
                   <h2>Calculation Result</h2>
                   {resultList.map((x,i) => {
@@ -109,12 +125,12 @@
                         <h3>{inputList[i].name}</h3>
                         {x.map((y, ii) => <p key={i + y.name + ii}>send ${y.amount} to {y.name}</p>)}
                       </div>
-                      )
-                    }
+                      )}
                   })}
                 </div>
               </div>
               <button onClick={() => setShowCalculator(true)}>Return</button>
+              <button onClick={() => handleDownload(ref.current)}>Download</button>
             </>
           )
         } else {
