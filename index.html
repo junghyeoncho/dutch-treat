@@ -11,7 +11,7 @@
     <script crossorigin src="https://unpkg.com/react@17/umd/react.development.js"></script>
     <!-- CDN for React DOM -->
     <script crossorigin src="https://unpkg.com/react-dom@17/umd/react-dom.development.js"></script>
-    <!-- Load html2canvas -->
+    <!-- CDN for html2canvas -->
     <script crossorigin src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     <!-- Load Babel -->
     <script crossorigin src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
@@ -26,7 +26,7 @@
         </>
       
       // Calculator Component
-      const Calculator = ({inputList, setInputList, setResultList, setShowCalculator}) => {
+      const Calculator = ({inputList, setInputList, setResultList, setShowCalculator, setCurrency}) => {
 
         // handle input change
         const handleInputChange = (e, index) => {
@@ -53,26 +53,39 @@
           // prevent re-render the form
           e.preventDefault();
           const index = inputList.length
+          const currency = selectList.current.value
+          const decimal = (currency === "₩"|| currency === "¥") ? 0 : 2;
           const name_array = inputList.map(x => x.name);
           const split_array= inputList.map(x => x.amountUsed/index);
           const array_list = inputList.map(x => Array(index).fill(x.amountUsed/index));
           const cal_value_list = array_list.map((x) => {return x.map((y, i) => {return split_array[i] - y})});
-          const results = cal_value_list.map((x) => {return x.map((y, i) => {return y>0 ? {amount: y, name: name_array[i]} : null})})
+          const results = cal_value_list.map((x) => {return x.map((y, i) => {return y>0 ? {amount: y.toFixed(decimal), name: name_array[i]} : null})})
           setResultList(results.map(x => x.filter(result => result != null)));
           setShowCalculator(false);
+          setCurrency(currency);
         }
         
         // handle click event of the Reset button
         const handleReset = () => {
           setInputList([{ name: "", amountUsed: "" }]);
           setResultList([]);
+          setCurrency("");
         }
+
+        const selectList = React.useRef();
 
         return (
           <div className="Calculator">
             <form onSubmit={handleCalculate}>
               <fieldset>
                 <button type="button" onClick={handleReset}>Reset</button>
+                <select ref={selectList} name="currency" id="currency">
+                  <option value="$">Dollar($)</option>
+                  <option value="₩">Won(₩)</option>
+                  <option value="€">Euro(€)</option>
+                  <option value="¥">Yen(¥)</option>
+                  <option value="£">Pound(£)</option>
+                </select>
                 {inputList.map((x, i) => {
                   return (
                     <div className="inputRow" key={"inputRowId"+i}>
@@ -87,18 +100,19 @@
                     </div>
                   );
                 })}
-                <button>Calculate</button>
+                {inputList.length === 1 && <button disabled>Calculate</button>}
+                {inputList.length > 1 && <button>Calculate</button>}
               </fieldset>
             </form>
-            {/*show input list*/}
-            <div style={{ marginTop: 20 }}>{JSON.stringify(inputList)}</div>
+            {/*show input list
+            <div style={{ marginTop: 20 }}>{JSON.stringify(inputList)}</div>*/}
           </div>
         );
       }
 
       // Result Component
-      const Result = ({inputList, resultList, setShowCalculator}) => {
-        const ref = React.useRef();
+      const Result = ({inputList, resultList, setShowCalculator, currency}) => {
+        const resultBox = React.useRef();
         const handleDownload = (element) => {
           html2canvas(element).then((canvas => {
             const resultImage = canvas.toDataURL("image/png");
@@ -115,7 +129,7 @@
         if(resultList.length > 0) {
           return(
             <>
-              <div ref={ref} className="result" id="result-box">
+              <div ref={resultBox} className="result" id="result-box">
                 <div className="result-content">
                   <h2>Calculation Result</h2>
                   {resultList.map((x,i) => {
@@ -123,14 +137,14 @@
                       return(
                       <div className="result-content-list" key={"resultList"+i}>
                         <h3>{inputList[i].name}</h3>
-                        {x.map((y, ii) => <p key={i + y.name + ii}>send ${y.amount} to {y.name}</p>)}
+                        {x.map((y, ii) => <p key={i + y.name + ii}>send {currency}{y.amount} to {y.name}</p>)}
                       </div>
                       )}
                   })}
                 </div>
               </div>
               <button onClick={() => setShowCalculator(true)}>Return</button>
-              <button onClick={() => handleDownload(ref.current)}>Download</button>
+              <button onClick={() => handleDownload(resultBox.current)}>Download</button>
             </>
           )
         } else {
@@ -145,12 +159,13 @@
         const [inputList, setInputList] = React.useState([{ name: "", amountUsed: "" }]);
         const [resultList, setResultList] = React.useState([]);
         const [showCalculator, setShowCalculator] = React.useState(true);
+        const [currency, setCurrency] = React.useState("");
         return(
           <>
             <Header />
             { showCalculator
-              ? <Calculator inputList={inputList} setInputList={setInputList} setResultList={setResultList} setShowCalculator={setShowCalculator}/>
-              : <Result inputList={inputList} resultList={resultList} setShowCalculator={setShowCalculator}/>
+              ? <Calculator inputList={inputList} setInputList={setInputList} setResultList={setResultList} setShowCalculator={setShowCalculator} setCurrency={setCurrency}/>
+              : <Result inputList={inputList} resultList={resultList} setShowCalculator={setShowCalculator} currency={currency}/>
             }
           </>
         )
