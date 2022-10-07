@@ -52,14 +52,22 @@
         const handleCalculate = e => {
           // prevent re-render the form
           e.preventDefault();
+          // number of people
           const index = inputList.length
+          // selected currency from dropdown
           const currency = selectList.current.value
-          const decimal = (currency === "₩"|| currency === "¥") ? 0 : 2;
+          // number of digits for money
+          const num_digits = (currency === "₩"|| currency === "¥") ? 0 : 2;
           const name_array = inputList.map(x => x.name);
+          // array of each person's equally divided amount used
           const split_array= inputList.map(x => x.amountUsed/index);
-          const array_list = inputList.map(x => Array(index).fill(x.amountUsed/index));
-          const cal_value_list = array_list.map((x) => {return x.map((y, i) => {return split_array[i] - y})});
-          const results = cal_value_list.map((x) => {return x.map((y, i) => {return y>0 ? {amount: y.toFixed(decimal), name: name_array[i]} : null})})
+          // list of each person's equal division array
+          const equal_division_list = inputList.map(x => Array(index).fill(x.amountUsed/index));
+          // compare array in the equal_division_list and split_array
+          const compared_list = equal_division_list.map((x) => {return x.map((y, i) => {return split_array[i] - y})});
+          // make compared list more readable
+          const results = compared_list.map((x) => {return x.map((y, i) => {return y>0 ? {amount: y.toFixed(num_digits), name: name_array[i]} : null})})
+          // remove null value and set resultList
           setResultList(results.map(x => x.filter(result => result != null)));
           setShowCalculator(false);
           setCurrency(currency);
@@ -71,7 +79,8 @@
           setResultList([]);
           setCurrency("");
         }
-
+        
+        // ref for dropdown(select)
         const selectList = React.useRef();
 
         return (
@@ -86,6 +95,7 @@
                   <option value="¥">Yen(¥)</option>
                   <option value="£">Pound(£)</option>
                 </select>
+                {/*input fields that is handled by add and remove buttons*/}
                 {inputList.map((x, i) => {
                   return (
                     <div className="inputRow" key={"inputRowId"+i}>
@@ -100,11 +110,13 @@
                     </div>
                   );
                 })}
+                {/* if only one input field exist then disable the calculate button
+                    else able the calculate button */}
                 {inputList.length === 1 && <button disabled>Calculate</button>}
                 {inputList.length > 1 && <button>Calculate</button>}
               </fieldset>
             </form>
-            {/*show input list
+            {/* for checking inputList as a json in the html
             <div style={{ marginTop: 20 }}>{JSON.stringify(inputList)}</div>*/}
           </div>
         );
@@ -112,16 +124,32 @@
 
       // Result Component
       const Result = ({inputList, resultList, setShowCalculator, currency}) => {
+        // ref for result box
         const resultBox = React.useRef();
+
+        // handle click event of the download button
         const handleDownload = (element) => {
+          // use html2canvas method to make image of specific DOM element
           html2canvas(element).then((canvas => {
+            // get current time
+            let d = new Date();
+            const offset = d.getTimezoneOffset();
+            d = new Date(d.getTime() - (offset*60*1000));
+            const current_time = d.toISOString().split('').map((c,i) => (i==4||i==7||i==10||i==13||i>15) ? '' : c).join('');
+            // make url that contains image data
             const resultImage = canvas.toDataURL("image/png");
+            // create anchor element
             let anchor = document.createElement('a');
             document.body.appendChild(anchor);
+            // disappear anchor from html body
             anchor.style = "display:none;";
+            // set href to image url
             anchor.href = resultImage
-            anchor.download = "image_name"
+            // make anchor downloadable and set file name
+            anchor.download = "DTC" + current_time;
+            // click anchor to download image
             anchor.click();
+            // remove anchor from html body
             document.body.removeChild(anchor);
             anchor.remove();
           }));
@@ -132,6 +160,7 @@
               <div ref={resultBox} className="result" id="result-box">
                 <div className="result-content">
                   <h2>Calculation Result</h2>
+                  {/* display result with resultList */}
                   {resultList.map((x,i) => {
                     if(x.length > 0) {
                       return(
@@ -144,7 +173,7 @@
                 </div>
               </div>
               <button onClick={() => setShowCalculator(true)}>Return</button>
-              <button onClick={() => handleDownload(resultBox.current)}>Download</button>
+              <button onClick={() => handleDownload(resultBox.current)}>Save as image</button>
             </>
           )
         } else {
@@ -155,7 +184,7 @@
 
       // App Component
       const App = () => {
-        // State hook to update input list, name array, result list and show calculator
+        // State hook to update input list, name array, result list, show calculator and currency
         const [inputList, setInputList] = React.useState([{ name: "", amountUsed: "" }]);
         const [resultList, setResultList] = React.useState([]);
         const [showCalculator, setShowCalculator] = React.useState(true);
@@ -163,6 +192,7 @@
         return(
           <>
             <Header />
+            {/* Show Calculator if showCalculator is true, else show Result*/}
             { showCalculator
               ? <Calculator inputList={inputList} setInputList={setInputList} setResultList={setResultList} setShowCalculator={setShowCalculator} setCurrency={setCurrency}/>
               : <Result inputList={inputList} resultList={resultList} setShowCalculator={setShowCalculator} currency={currency}/>
@@ -170,6 +200,7 @@
           </>
         )
       }
+      // render React DOM element
       ReactDOM.render(
         <>
           <App />
