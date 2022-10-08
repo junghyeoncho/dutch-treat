@@ -26,7 +26,7 @@
         </>
       
       // Calculator Component
-      const Calculator = ({inputList, setInputList, setResultList, setShowCalculator, setCurrency}) => {
+      const Calculator = ({inputList, setInputList, setResultList, setShowCalculator, currency, setCurrency}) => {
 
         // handle input change
         const handleInputChange = (e, index) => {
@@ -54,8 +54,6 @@
           e.preventDefault();
           // number of people
           const index = inputList.length
-          // selected currency from dropdown
-          const currency = selectList.current.value
           // number of digits for money
           const num_digits = (currency === "₩"|| currency === "¥") ? 0 : 2;
           const name_array = inputList.map(x => x.name);
@@ -70,25 +68,23 @@
           // remove null value and set resultList
           setResultList(results.map(x => x.filter(result => result != null)));
           setShowCalculator(false);
-          setCurrency(currency);
         }
         
         // handle click event of the Reset button
         const handleReset = () => {
           setInputList([{ name: "", amountUsed: "" }]);
           setResultList([]);
-          setCurrency("");
+          setCurrency("$");
         }
-        
+
         // ref for dropdown(select)
         const selectList = React.useRef();
-
         return (
           <div className="Calculator">
             <form onSubmit={handleCalculate}>
               <fieldset>
                 <button type="button" onClick={handleReset}>Reset</button>
-                <select ref={selectList} name="currency" id="currency">
+                <select value={currency} onChange={(e)=> setCurrency(e.target.value)} id="currency">
                   <option value="$">Dollar($)</option>
                   <option value="₩">Won(₩)</option>
                   <option value="€">Euro(€)</option>
@@ -179,7 +175,6 @@
         } else {
           return null;
         }
-        
       }
 
       // App Component
@@ -188,13 +183,13 @@
         const [inputList, setInputList] = React.useState([{ name: "", amountUsed: "" }]);
         const [resultList, setResultList] = React.useState([]);
         const [showCalculator, setShowCalculator] = React.useState(true);
-        const [currency, setCurrency] = React.useState("");
+        const [currency, setCurrency] = React.useState("$");
         return(
           <>
             <Header />
             {/* Show Calculator if showCalculator is true, else show Result*/}
             { showCalculator
-              ? <Calculator inputList={inputList} setInputList={setInputList} setResultList={setResultList} setShowCalculator={setShowCalculator} setCurrency={setCurrency}/>
+              ? <Calculator inputList={inputList} setInputList={setInputList} setResultList={setResultList} setShowCalculator={setShowCalculator} currency={currency} setCurrency={setCurrency}/>
               : <Result inputList={inputList} resultList={resultList} setShowCalculator={setShowCalculator} currency={currency}/>
             }
           </>
