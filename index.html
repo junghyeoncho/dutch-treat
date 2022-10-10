@@ -4,7 +4,8 @@
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <link rel="stylesheet" href="css/style.css">
-    <title></title>
+    <title>Dutch Treat Calculator</title>
+    <link rel="icon" type="image/x-icon" href="">
     <meta name="description" content="">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <!-- CDN for React -->
@@ -162,7 +163,7 @@
                       return(
                       <div className="result-content-list" key={"resultList"+i}>
                         <h3>{inputList[i].name}</h3>
-                        {x.map((y, ii) => <p key={i + y.name + ii}>send {currency}{y.amount} to {y.name}</p>)}
+                        {x.map((y, ii) => <p key={i + y.name + ii}>gite {currency}{y.amount} to {y.name}</p>)}
                       </div>
                       )}
                   })}
@@ -186,12 +187,14 @@
         const [currency, setCurrency] = React.useState("$");
         return(
           <>
-            <Header />
-            {/* Show Calculator if showCalculator is true, else show Result*/}
-            { showCalculator
-              ? <Calculator inputList={inputList} setInputList={setInputList} setResultList={setResultList} setShowCalculator={setShowCalculator} currency={currency} setCurrency={setCurrency}/>
-              : <Result inputList={inputList} resultList={resultList} setShowCalculator={setShowCalculator} currency={currency}/>
-            }
+            <div className="app">
+              <Header />
+              {/* Show Calculator if showCalculator is true, else show Result*/}
+              { showCalculator
+                ? <Calculator inputList={inputList} setInputList={setInputList} setResultList={setResultList} setShowCalculator={setShowCalculator} currency={currency} setCurrency={setCurrency}/>
+                : <Result inputList={inputList} resultList={resultList} setShowCalculator={setShowCalculator} currency={currency}/>
+              }
+            </div>
           </>
         )
       }
