@@ -4,7 +4,8 @@
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <link rel="stylesheet" href="css/style.css">
-    <title></title>
+    <title>Dutch Treat Calculator</title>
+    <link rel="icon" type="image/x-icon" href="">
     <meta name="description" content="">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <!-- CDN for React -->
@@ -22,11 +23,11 @@
       // Header Component
       const Header = () =>
         <>
-          <h1>Dutch Treat Calculator</h1>
+          <h1 className="header">Dutch Treat Calculator</h1>
         </>
       
       // Calculator Component
-      const Calculator = ({inputList, setInputList, setResultList, setShowCalculator, setCurrency}) => {
+      const Calculator = ({inputList, setInputList, setResultList, setShowCalculator, currency, setCurrency}) => {
 
         // handle input change
         const handleInputChange = (e, index) => {
@@ -54,8 +55,6 @@
           e.preventDefault();
           // number of people
           const index = inputList.length
-          // selected currency from dropdown
-          const currency = selectList.current.value
           // number of digits for money
           const num_digits = (currency === "₩"|| currency === "¥") ? 0 : 2;
           const name_array = inputList.map(x => x.name);
@@ -70,51 +69,47 @@
           // remove null value and set resultList
           setResultList(results.map(x => x.filter(result => result != null)));
           setShowCalculator(false);
-          setCurrency(currency);
         }
         
         // handle click event of the Reset button
         const handleReset = () => {
           setInputList([{ name: "", amountUsed: "" }]);
           setResultList([]);
-          setCurrency("");
+          setCurrency("$");
         }
-        
+
         // ref for dropdown(select)
         const selectList = React.useRef();
-
         return (
           <div className="Calculator">
             <form onSubmit={handleCalculate}>
-              <fieldset>
-                <button type="button" onClick={handleReset}>Reset</button>
-                <select ref={selectList} name="currency" id="currency">
-                  <option value="$">Dollar($)</option>
-                  <option value="₩">Won(₩)</option>
-                  <option value="€">Euro(€)</option>
-                  <option value="¥">Yen(¥)</option>
-                  <option value="£">Pound(£)</option>
-                </select>
-                {/*input fields that is handled by add and remove buttons*/}
-                {inputList.map((x, i) => {
-                  return (
-                    <div className="inputRow" key={"inputRowId"+i}>
-                      <input type = "text" name="name" placeholder="Enter Name" value={x.name}
-                        onChange={e => handleInputChange(e, i)} required />
-                      <input type = "number" name="amountUsed" placeholder="Enter Amount Used" value={x.amountUsed} 
-                        onChange={e => handleInputChange(e, i)} required />
-                      {inputList.length !== 1 && <button onClick={() => handleRemoveClick(i)}>Remove</button>}
-                      <div className="add-btn">
-                        {inputList.length - 1 === i && <button onClick={handleAddClick}>Add</button>}
-                      </div>
+              <button type="button" onClick={handleReset}>Reset</button>
+              <select value={currency} onChange={(e)=> setCurrency(e.target.value)} id="currency">
+                <option value="$">Dollar($)</option>
+                <option value="₩">Won(₩)</option>
+                <option value="€">Euro(€)</option>
+                <option value="¥">Yen(¥)</option>
+                <option value="£">Pound(£)</option>
+              </select>
+              {/*input fields that is handled by add and remove buttons*/}
+              {inputList.map((x, i) => {
+                return (
+                  <div className="inputRow" key={"inputRowId"+i}>
+                    <input type = "text" name="name" placeholder="Enter Name" value={x.name}
+                      onChange={e => handleInputChange(e, i)} required />
+                    <input type = "number" name="amountUsed" placeholder="Enter Amount Used" value={x.amountUsed} 
+                      onChange={e => handleInputChange(e, i)} required />
+                    {inputList.length !== 1 && <button onClick={() => handleRemoveClick(i)}>Remove</button>}
+                    <div className="add-btn">
+                      {inputList.length - 1 === i && <button onClick={handleAddClick}>Add</button>}
                     </div>
-                  );
-                })}
-                {/* if only one input field exist then disable the calculate button
-                    else able the calculate button */}
-                {inputList.length === 1 && <button disabled>Calculate</button>}
-                {inputList.length > 1 && <button>Calculate</button>}
-              </fieldset>
+                  </div>
+                );
+              })}
+              {/* if only one input field exist then disable the calculate button
+                  else able the calculate button */}
+              {inputList.length === 1 && <button disabled>Calculate</button>}
+              {inputList.length > 1 && <button>Calculate</button>}
             </form>
             {/* for checking inputList as a json in the html
             <div style={{ marginTop: 20 }}>{JSON.stringify(inputList)}</div>*/}
@@ -166,7 +161,7 @@
                       return(
                       <div className="result-content-list" key={"resultList"+i}>
                         <h3>{inputList[i].name}</h3>
-                        {x.map((y, ii) => <p key={i + y.name + ii}>send {currency}{y.amount} to {y.name}</p>)}
+                        {x.map((y, ii) => <p key={i + y.name + ii}>gite {currency}{y.amount} to {y.name}</p>)}
                       </div>
                       )}
                   })}
@@ -179,7 +174,6 @@
         } else {
           return null;
         }
-        
       }
 
       // App Component
@@ -188,15 +182,17 @@
         const [inputList, setInputList] = React.useState([{ name: "", amountUsed: "" }]);
         const [resultList, setResultList] = React.useState([]);
         const [showCalculator, setShowCalculator] = React.useState(true);
-        const [currency, setCurrency] = React.useState("");
+        const [currency, setCurrency] = React.useState("$");
         return(
           <>
-            <Header />
-            {/* Show Calculator if showCalculator is true, else show Result*/}
-            { showCalculator
-              ? <Calculator inputList={inputList} setInputList={setInputList} setResultList={setResultList} setShowCalculator={setShowCalculator} setCurrency={setCurrency}/>
-              : <Result inputList={inputList} resultList={resultList} setShowCalculator={setShowCalculator} currency={currency}/>
-            }
+            <div className="app">
+              <Header />
+              {/* Show Calculator if showCalculator is true, else show Result*/}
+              { showCalculator
+                ? <Calculator inputList={inputList} setInputList={setInputList} setResultList={setResultList} setShowCalculator={setShowCalculator} currency={currency} setCurrency={setCurrency}/>
+                : <Result inputList={inputList} resultList={resultList} setShowCalculator={setShowCalculator} currency={currency}/>
+              }
+            </div>
           </>
         )
       }
