@@ -23,7 +23,8 @@
       // Header Component
       const Header = () =>
         <>
-          <h1 className="header">Dutch Treat Calculator</h1>
+          <h1 className="header" title="Dutch Treat Calculator">Dutch Treat Calculator</h1>
+          <h1 className="header-shadow" title="Dutch Treat Calculator">Dutch Treat Calculator</h1>
         </>
       
       // Calculator Component
@@ -83,8 +84,8 @@
         return (
           <div className="Calculator">
             <form onSubmit={handleCalculate}>
-              <button type="button" onClick={handleReset}>Reset</button>
-              <select value={currency} onChange={(e)=> setCurrency(e.target.value)} id="currency">
+              <button className="reset-btn" type="button" onClick={handleReset}>Reset</button>
+              <select className="currency-select" value={currency} onChange={(e)=> setCurrency(e.target.value)} id="currency">
                 <option value="$">Dollar($)</option>
                 <option value="₩">Won(₩)</option>
                 <option value="€">Euro(€)</option>
@@ -99,17 +100,17 @@
                       onChange={e => handleInputChange(e, i)} required />
                     <input type = "number" name="amountUsed" placeholder="Enter Amount Used" value={x.amountUsed} 
                       onChange={e => handleInputChange(e, i)} required />
-                    {inputList.length !== 1 && <button onClick={() => handleRemoveClick(i)}>Remove</button>}
+                    {inputList.length !== 1 && <button className="remove-btn" onClick={() => handleRemoveClick(i)}>Remove</button>}
                     <div className="add-btn">
-                      {inputList.length - 1 === i && <button onClick={handleAddClick}>Add</button>}
+                      {inputList.length - 1 === i && <button className="add-btn" onClick={handleAddClick}>Add</button>}
                     </div>
                   </div>
                 );
               })}
               {/* if only one input field exist then disable the calculate button
                   else able the calculate button */}
-              {inputList.length === 1 && <button disabled>Calculate</button>}
-              {inputList.length > 1 && <button>Calculate</button>}
+              {inputList.length === 1 && <button className="calculate-btn" disabled>Calculate</button>}
+              {inputList.length > 1 && <button className="calculate-btn">Calculate</button>}
             </form>
             {/* for checking inputList as a json in the html
             <div style={{ marginTop: 20 }}>{JSON.stringify(inputList)}</div>*/}
