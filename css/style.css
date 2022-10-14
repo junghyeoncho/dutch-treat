@@ -18,6 +18,7 @@ html, body, #container {
 }
 .app {
   width: 40%;
+  min-width: 383px;
   min-height: 50%;
   margin: auto;
   padding: 30px;
@@ -70,11 +71,26 @@ html, body, #container {
   color: plum;
 }
 .Calculator .remove-btn {
-  color: rgb(255, 213, 0);
+  color: orangered;
 }
 .Calculator .add-btn {
   color: greenyellow;
 }
 .Calculator .calculate-btn {
   color: rgb(47, 245, 255);
+}
+.Calculator .currency-select {
+  margin: 4px;
+  margin-left: 55%;
+  padding: 4px;
+  border: none;
+  border-right: 2px solid #979797f5;
+  border-bottom: 2px solid #979797f5;
+  border-radius: 3px;
+  background-color: rgb(247, 247, 247);
+  color: rgb(255, 213, 0);
+  font-weight: bold;
+}
+.Calculator .currency-select option {
+  font-weight: bold;
 }

@@ -84,7 +84,7 @@
           <div className="Calculator">
             <form onSubmit={handleCalculate}>
               <button className="reset-btn" type="button" onClick={handleReset}>Reset</button>
-              <select value={currency} onChange={(e)=> setCurrency(e.target.value)} id="currency">
+              <select className="currency-select" value={currency} onChange={(e)=> setCurrency(e.target.value)} id="currency">
                 <option value="$">Dollar($)</option>
                 <option value="₩">Won(₩)</option>
                 <option value="€">Euro(€)</option>
