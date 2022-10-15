@@ -122,15 +122,15 @@
       const Result = ({inputList, resultList, setShowCalculator, currency}) => {
         // ref for result box
         const resultBox = React.useRef();
-
+        // create date objects
+        const date = new Date();
         // handle click event of the download button
         const handleDownload = (element) => {
           // use html2canvas method to make image of specific DOM element
           html2canvas(element).then((canvas => {
             // get current time
-            let d = new Date();
-            const offset = d.getTimezoneOffset();
-            d = new Date(d.getTime() - (offset*60*1000));
+            const offset = date.getTimezoneOffset();
+            let d = new Date(date.getTime() - (offset*60*1000));
             const current_time = d.toISOString().split('').map((c,i) => (i==4||i==7||i==10||i==13||i>15) ? '' : c).join('');
             // make url that contains image data
             const resultImage = canvas.toDataURL("image/png");
@@ -156,20 +156,24 @@
               <div ref={resultBox} className="result" id="result-box">
                 <div className="result-content">
                   <h2>Calculation Result</h2>
+                  <div className="line"></div>
                   {/* display result with resultList */}
                   {resultList.map((x,i) => {
                     if(x.length > 0) {
                       return(
                       <div className="result-content-list" key={"resultList"+i}>
                         <h3>{inputList[i].name}</h3>
-                        {x.map((y, ii) => <p key={i + y.name + ii}>gite {currency}{y.amount} to {y.name}</p>)}
+                        {x.map((y, ii) => <div className="list-item" key={i + y.name + ii}>give {currency}{y.amount} to {y.name}</div>)}
                       </div>
                       )}
                   })}
+                  <div className="date">{date.toString().split(' ').map( (x,i) => { return i<5 ? x : ''}).join(' ')}</div>
                 </div>
               </div>
-              <button onClick={() => setShowCalculator(true)}>Return</button>
-              <button onClick={() => handleDownload(resultBox.current)}>Save as image</button>
+              <div className="result-btn">
+                <button onClick={() => setShowCalculator(true)}>Return</button>
+                <button onClick={() => handleDownload(resultBox.current)}>Save as image</button>
+              </div>
             </>
           )
         } else {
