@@ -24,7 +24,7 @@ html, body, #container {
 }
 .app {
   width: 40%;
-  min-width: 383px;
+  min-width: 554px;
   min-height: 50%;
   margin: auto;
   padding: 30px;
@@ -36,6 +36,7 @@ html, body, #container {
   box-sizing: border-box;
 }
 .header {
+  width: 436px;
   margin: 0;
   padding: 0;
   color: black;
